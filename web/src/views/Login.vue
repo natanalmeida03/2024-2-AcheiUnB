@@ -7,9 +7,9 @@
 
   <div
     id="main-content"
-    class="flex flex-col lg:flex-row bg-azul text-white p-4 min-h-screen hidden items-center justify-center lg:justify-between"
+    class="flex flex-col lg:flex-row bg-azul text-white p-4 min-h-screen hidden items-center justify-center lg:justify-center"
   >
-    <div class="flex flex-col items-center lg:items-start w-full max-w-2xl px-4">
+    <div class="flex flex-col items-center lg:items-start w-full max-w-2xl px-4 pt-10 lg:pt-0">
       <div class="titulo flex justify-center lg:justify-start w-full mt-20 mb-16">
         <Logo />
       </div>
@@ -41,9 +41,9 @@
 class="relative flex flex-col items-center w-full max-w-4xl px-4 mt-16 lg:mt-10 lg:ml-10"
       @click="animateButton()"
     >
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full justify-items-center">
+    <div class="grid grid-cols-1 md:grid-cols-2 xxl:grid-cols-3 gap-8 w-full justify-items-center">
         <ItemCard
-          v-for="item in foundItems"
+          v-for="item in foundItemsToDisplay"
           :key="item.id"
           :name="item.name"
           :location="item.location_name"
@@ -67,7 +67,7 @@ class="relative flex flex-col items-center w-full max-w-4xl px-4 mt-16 lg:mt-10 
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, computed, onBeforeUnmount } from "vue";
 import Logo from "../components/Logo.vue";
 import { fetchFoundItems } from "@/services/apiItems";
 import { formatTime } from "@/utils/dateUtils";
@@ -75,8 +75,15 @@ import ItemCard from "../components/Item-Card.vue";
 
 const foundItems = ref([]);
 const animatedButton = ref(null);
+const windowWidth = ref(window.innerWidth);
+
+function updateWidth() {
+  windowWidth.value = window.innerWidth;
+}
 
 onMounted(async () => {
+  window.addEventListener("resize", updateWidth);
+
   const transitionScreen = document.getElementById("transition-screen");
   const mainContent = document.getElementById("main-content");
 
@@ -97,8 +104,20 @@ onMounted(async () => {
     location_name: "",
   });
 
-  foundItems.value = response.results.slice(0, 4);
+  foundItems.value = response.results;
 });
+
+onBeforeUnmount(() => {
+  window.removeEventListener("resize", updateWidth);
+});
+
+const itemsToShow = computed(() => {
+  return windowWidth.value >= 1341 ? 6 : 4;
+});
+
+const foundItemsToDisplay = computed(() =>
+  foundItems.value.slice(0, itemsToShow.value)
+);
 
 function animateButton() {
   if (animatedButton.value) {
