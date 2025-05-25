@@ -230,6 +230,7 @@ JAZZMIN_SETTINGS = {
     "icons": {
         "auth.User": "fas fa-user",
         "auth.Group": "fas fa-users",
+        "users.Item": "fas fa-box",
     },
     "custom_links": {
         "users": [
