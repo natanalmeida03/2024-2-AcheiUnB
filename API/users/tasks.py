@@ -10,6 +10,8 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.utils.timezone import now
 
+from chat.models import Message
+
 from .models import Item, ItemImage, UserProfile
 
 
@@ -162,3 +164,12 @@ def send_unban_notification_email(user_email, first_name, last_name):
     )
 
     return f"E-mail de desbloqueio enviado para {user_email}"
+  
+def delete_old_messages(room_id, max_messages=40):
+    """
+    Mantém apenas as últimas `max_messages` mensagens em uma conversa.
+    """
+    messages = Message.objects.filter(room_id=room_id).order_by("-timestamp")
+    if messages.count() > max_messages:
+        ids_to_keep = messages.values_list("id", flat=True)[:max_messages]
+        Message.objects.filter(room_id=room_id).exclude(id__in=ids_to_keep).delete()

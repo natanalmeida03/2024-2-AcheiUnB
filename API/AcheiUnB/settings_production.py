@@ -120,6 +120,7 @@ SECRET_KEY = "django-insecure-%7=()&6sxvzdq68n)q^8n)g6#kw8p=45v)(hp^t%@*e4ty=##u
 CORS_ALLOWED_ORIGINS = [
     "https://localhost:8080",
     "https://127.0.0.1:8080",
+    "https://acheiunb.com.br",
 ]
 CORS_ALLOW_CREDENTIALS = True  # Permite cookies na autenticação
 CORS_ALLOW_HEADERS = ["*"]
@@ -127,6 +128,7 @@ CORS_ALLOW_METHODS = ["*"]
 CSRF_TRUSTED_ORIGINS = [
     "https://localhost:8080",
     "https://127.0.0.1:8080",
+    "https://acheiunb.com.br",
 ]
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
