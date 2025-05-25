@@ -6,7 +6,11 @@ from django.dispatch import receiver
 from django.utils.timezone import is_naive, make_aware
 
 from .models import ItemImage, UserProfile
-from .tasks import send_welcome_email
+from .tasks import (
+    send_ban_notification_email,
+    send_unban_notification_email,
+    send_welcome_email,
+)
 
 
 @receiver(post_save, sender=User)
@@ -50,3 +54,14 @@ def delete_image_from_cloudinary(sender, instance, **kwargs):
             cloudinary.uploader.destroy(public_id)
         except Exception as e:
             print(f"Erro ao remover a imagem do Cloudinary: {str(e)}")
+
+
+@receiver(post_save, sender=UserProfile)
+def notify_user_ban_status_change(sender, instance, **kwargs):
+    if kwargs.get("update_fields") is None or "is_banned" in kwargs.get("update_fields", []):
+        user = instance.user
+
+        if instance.is_banned:
+            send_ban_notification_email.delay(user.email, user.first_name, user.last_name)
+        else:
+            send_unban_notification_email.delay(user.email, user.first_name, user.last_name)
