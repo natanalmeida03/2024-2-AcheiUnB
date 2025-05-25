@@ -72,6 +72,7 @@ import Logo from "../components/Logo.vue";
 import { fetchFoundItems } from "@/services/apiItems";
 import { formatTime } from "@/utils/dateUtils";
 import ItemCard from "../components/Item-Card.vue";
+import NotAvailableImage from "@/assets/images/not-available.png";
 
 const foundItems = ref([]);
 const animatedButton = ref(null);
