@@ -3,6 +3,7 @@ from datetime import timedelta
 
 import cloudinary.uploader
 from celery import shared_task
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
@@ -122,6 +123,47 @@ def delete_old_items_and_chats():
     return f"{count} itens e seus chats vinculados foram excluídos."
 
 
+@shared_task
+def send_ban_notification_email(user_email, first_name, last_name):
+    subject = "Notificação de Banimento - AcheiUnB"
+    message = (
+        f"Olá {first_name} {last_name},\n\n"
+        "Informamos que sua conta no AcheiUnB foi banida.\n"
+        "Se você acredita que isso foi um erro, entre em contato com o suporte."
+    )
+    from_email = settings.DEFAULT_FROM_EMAIL
+
+    send_mail(
+        subject,
+        message,
+        from_email,
+        [user_email],
+        fail_silently=False,
+    )
+
+    return f"E-mail de banimento enviado para {user_email}"
+
+
+@shared_task
+def send_unban_notification_email(user_email, first_name, last_name):
+    subject = "Sua conta foi desbloqueada - AcheiUnB"
+    message = (
+        f"Olá {first_name} {last_name},\n\n"
+        "Informamos que sua conta no AcheiUnB foi desbloqueada.\n"
+        "Você já pode voltar a utilizar a plataforma normalmente.\n\n"
+        "Se tiver dúvidas, entre em contato com nosso suporte."
+    )
+    from_email = settings.DEFAULT_FROM_EMAIL
+
+    send_mail(
+        subject,
+        message,
+        from_email,
+        [user_email],
+        fail_silently=False,
+    )
+
+    return f"E-mail de desbloqueio enviado para {user_email}"
 @shared_task
 def delete_old_messages(room_id, max_messages=40):
     """
