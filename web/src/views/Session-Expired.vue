@@ -13,6 +13,7 @@
     >
       <router-link to="/" class="w-full flex justify-center">
         <button
+          @click="handleLoginClick"
           class="bg-white text-verde w-full md:w-[70%] lg:w-[40%] font-semibold py-4 rounded-full hover:scale-110 transition-transform duration-300 text-center text-lg lg:text-xl"
         >
           Fazer login
@@ -23,5 +24,18 @@
 </template>
 
 <script setup>
-import Logo from "../components/Logo.vue";
+function clearAllCookies() {
+  const cookies = document.cookie.split(";");
+
+  for (let cookie of cookies) {
+    const eqPos = cookie.indexOf("=");
+    const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+    document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+    document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=";
+  }
+}
+
+function handleLoginClick() {
+  clearAllCookies();
+}
 </script>
