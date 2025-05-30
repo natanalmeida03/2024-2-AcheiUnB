@@ -1,10 +1,10 @@
 import cloudinary.uploader
 from django.contrib.auth.models import User
 from django.contrib.auth.signals import user_logged_in
-from django.db.models.signals import post_delete, post_save
+from django.db.models.signals import post_delete, post_save, pre_save
 from django.dispatch import receiver
 from django.utils.timezone import is_naive, make_aware
-from django.db.models.signals import pre_save
+
 from .models import ItemImage, UserProfile
 from .tasks import (
     send_ban_notification_email,
@@ -54,7 +54,6 @@ def delete_image_from_cloudinary(sender, instance, **kwargs):
             cloudinary.uploader.destroy(public_id)
         except Exception as e:
             print(f"Erro ao remover a imagem do Cloudinary: {str(e)}")
-
 
 
 @receiver(pre_save, sender=UserProfile)

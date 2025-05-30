@@ -164,6 +164,8 @@ def send_unban_notification_email(user_email, first_name, last_name):
     )
 
     return f"E-mail de desbloqueio enviado para {user_email}"
+
+
 @shared_task
 def delete_old_messages(room_id, max_messages=40):
     """
