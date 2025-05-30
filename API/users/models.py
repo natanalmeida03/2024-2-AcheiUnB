@@ -6,6 +6,7 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
     profile_picture = models.URLField(null=True, blank=True)
     welcome_email_sent = models.BooleanField(default=False)
+    is_banned = models.BooleanField(default=False)
 
 
 class Category(models.Model):

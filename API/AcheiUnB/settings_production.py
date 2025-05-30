@@ -9,6 +9,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["achadoseperdidos.lappis.rocks", "acheiunb.com.br", "localhost", "127.0.0.1"]
 INSTALLED_APPS = [
+    "jazzmin",
     "django.contrib.contenttypes",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -36,6 +37,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",  # Necessário para o admin
     "django.contrib.messages.middleware.MessageMiddleware",  # Necessário para o admin
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "users.middleware.BlockBannedUsersMiddleware",
 ]
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": ("users.authentication.CookieJWTAuthentication",),
@@ -67,6 +69,32 @@ TEMPLATES = [
     },
 ]
 
+JAZZMIN_SETTINGS = {
+    "site_title": "AcheiUnB Admin",
+    "site_header": "AcheiUnB",
+    "welcome_sign": "Bem-vindo ao painel do AcheiUnB!",
+    "search_model": "auth.User",
+    "user_avatar": None,
+    "show_sidebar": True,
+    "navigation_expanded": True,
+    "icons": {
+        "auth.User": "fas fa-user",
+        "auth.Group": "fas fa-users",
+        "users.Item": "fas fa-box",
+    },
+    "custom_links": {
+        "users": [
+            {
+                "name": "Celery Tasks",
+                "url": "/admin/django_celery_results/taskresult/",
+                "icon": "fas fa-tasks",
+            }
+        ],
+    },
+    "logo": None,
+    "brand": "AcheiUnB",
+    "copyright": "AcheiUnB",
+}
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -92,6 +120,7 @@ SECRET_KEY = "django-insecure-%7=()&6sxvzdq68n)q^8n)g6#kw8p=45v)(hp^t%@*e4ty=##u
 CORS_ALLOWED_ORIGINS = [
     "https://localhost:8080",
     "https://127.0.0.1:8080",
+    "https://acheiunb.com.br",
 ]
 CORS_ALLOW_CREDENTIALS = True  # Permite cookies na autenticação
 CORS_ALLOW_HEADERS = ["*"]
@@ -99,6 +128,7 @@ CORS_ALLOW_METHODS = ["*"]
 CSRF_TRUSTED_ORIGINS = [
     "https://localhost:8080",
     "https://127.0.0.1:8080",
+    "https://acheiunb.com.br",
 ]
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
