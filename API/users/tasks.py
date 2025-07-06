@@ -114,6 +114,22 @@ def delete_old_items_and_chats():
 
     old_items = Item.objects.filter(created_at__lt=cutoff_date)
 
+    for item in old_items:
+        subject = "Seu item foi removido do AcheiUnB"
+        html_message = render_to_string(
+            "emails/item_deleted.html",
+            {"item_name": item.name, "user_name": item.user.first_name},
+        )
+        plain_message = strip_tags(html_message)
+
+        send_mail(
+            subject,
+            plain_message,
+            "acheiunb2024@gmail.com",
+            [item.user.email],
+            html_message=html_message,
+        )
+
     item_ids = [item.id for item in old_items]
     print(f"Itens encontrados para exclusão: {item_ids}")
 
@@ -164,6 +180,33 @@ def send_unban_notification_email(user_email, first_name, last_name):
     )
 
     return f"E-mail de desbloqueio enviado para {user_email}"
+
+
+@shared_task
+def send_expiration_alerts():
+    """Envia alertas para itens que expiram em 1 dia."""
+    expiration_warning_date = now() - timedelta(days=13)
+
+    items_expiring_soon = Item.objects.filter(
+        created_at__lt=expiration_warning_date,
+        created_at__gt=expiration_warning_date - timedelta(days=1),
+    )
+
+    for item in items_expiring_soon:
+        subject = "Alerta de expiração do seu item no AcheiUnB"
+        html_message = render_to_string(
+            "emails/expiration_alert.html",
+            {"item_name": item.name, "user_name": item.user.first_name},
+        )
+        plain_message = strip_tags(html_message)
+
+        send_mail(
+            subject,
+            plain_message,
+            "acheiunb2024@gmail.com",
+            [item.user.email],
+            html_message=html_message,
+        )
 
 
 @shared_task

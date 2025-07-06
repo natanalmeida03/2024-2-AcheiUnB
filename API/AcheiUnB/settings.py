@@ -133,14 +133,29 @@ SOCIALACCOUNT_ADAPTER = "users.adapters.CustomSocialAccountAdapter"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.getenv("DB_NAME"),
-        "USER": os.getenv("DB_USER"),
-        "PASSWORD": os.getenv("DB_PASSWORD"),
-        "HOST": os.getenv("DB_HOST"),
-        "PORT": os.getenv("DB_PORT"),
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
+
+if os.getenv("TESTING"):
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": ":memory:",
+        }
+    }
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.getenv("DB_NAME"),
+            "USER": os.getenv("DB_USER"),
+            "PASSWORD": os.getenv("DB_PASSWORD"),
+            "HOST": os.getenv("DB_HOST"),
+            "PORT": os.getenv("DB_PORT"),
+        }
+    }
 
 
 cloudinary.config(
@@ -212,6 +227,10 @@ CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", "redis://redis:6379/0
 CELERY_BEAT_SCHEDULE = {
     "delete_old_items_and_chats": {
         "task": "users.tasks.delete_old_items_and_chats",
+        "schedule": crontab(hour=3, minute=0),
+    },
+    "send_expiration_alerts": {
+        "task": "users.tasks.send_expiration_alerts",
         "schedule": crontab(hour=3, minute=0),
     },
 }

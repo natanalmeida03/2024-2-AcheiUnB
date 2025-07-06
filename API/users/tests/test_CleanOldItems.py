@@ -15,7 +15,9 @@ class CleanOldItemsTest(TestCase):
     def setUp(self):
 
         self.user1 = User.objects.create_user(username="user1", password="password1")
-        self.user2 = User.objects.create_user(username="user2", password="password2")
+        self.user2 = User.objects.create_user(
+            username="user2", password="password2", email="testuser@example.com"
+        )
 
         self.recent_item = Item.objects.create(
             name="Recent Item",
@@ -54,3 +56,12 @@ class CleanOldItemsTest(TestCase):
         assert Item.objects.filter(id=self.recent_item.id).exists()
 
         assert ChatRoom.objects.filter(id=self.chat_recent.id).exists()
+
+    def test_send_email_on_old_item_deletion(self):
+        from django.core import mail
+
+        delete_old_items_and_chats()
+
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to[0], self.user2.email)
+        self.assertEqual(mail.outbox[0].subject, "Seu item foi removido do AcheiUnB")
