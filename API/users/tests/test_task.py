@@ -164,11 +164,14 @@ class RemoveImagesFromItemTests(TestCase):
 
 class DeleteOldItemsAndChatsTests(TestCase):
     def setUp(self):
+        self.user = User.objects.create_user(
+            username="testuser", email="test@example.com", password="testpassword"
+        )
         past_date = now() - timedelta(weeks=3)
-        self.old_item = Item.objects.create(name="Old Item")
+        self.old_item = Item.objects.create(name="Old Item", user=self.user)
         Item.objects.filter(id=self.old_item.id).update(created_at=past_date)
 
-        self.new_item = Item.objects.create(name="New Item")
+        self.new_item = Item.objects.create(name="New Item", user=self.user)
 
     def test_delete_old_items_and_chats(self):
         result = delete_old_items_and_chats()

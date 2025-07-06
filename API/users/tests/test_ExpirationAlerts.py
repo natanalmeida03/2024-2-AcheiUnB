@@ -38,8 +38,6 @@ class ExpirationAlertsTest(TestCase):
 
         send_expiration_alerts()
 
-        self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].to[0], self.user.email)
-        self.assertEqual(
-            mail.outbox[0].subject, "Alerta de expiração do seu item no AcheiUnB"
-        )
+        assert len(mail.outbox) == 1
+        assert mail.outbox[0].to[0] == self.user.email
+        assert mail.outbox[0].subject == "Alerta de expiração do seu item no AcheiUnB"

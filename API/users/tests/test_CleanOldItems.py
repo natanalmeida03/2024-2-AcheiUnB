@@ -62,6 +62,6 @@ class CleanOldItemsTest(TestCase):
 
         delete_old_items_and_chats()
 
-        self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].to[0], self.user2.email)
-        self.assertEqual(mail.outbox[0].subject, "Seu item foi removido do AcheiUnB")
+        assert len(mail.outbox) == 1
+        assert mail.outbox[0].to[0] == self.user2.email
+        assert mail.outbox[0].subject == "Seu item foi removido do AcheiUnB"
